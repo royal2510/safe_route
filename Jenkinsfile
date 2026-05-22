@@ -74,14 +74,16 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying with Docker Compose...'
-                sh 'docker compose down || true'
-                sh 'docker compose up -d --build'
+
+                sh 'docker-compose down || true'
+                sh 'docker-compose up -d --build'
             }
         }
 
         stage('Release') {
             steps {
                 echo 'Creating release tag...'
+
                 sh '''
                 git config user.email "jenkins@example.com"
                 git config user.name "Jenkins CI"
