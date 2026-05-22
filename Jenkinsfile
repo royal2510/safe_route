@@ -10,26 +10,20 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out source code...'
                 checkout scm
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Installing dependencies...'
                 sh 'npm install'
-
-                echo 'Building Docker image...'
                 sh 'docker build -t $DOCKER_IMAGE -t $DOCKER_LATEST .'
-
                 archiveArtifacts artifacts: 'package.json,Dockerfile,Jenkinsfile', fingerprint: true
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running automated tests...'
                 sh 'npm test'
             }
 
@@ -42,30 +36,27 @@ pipeline {
 
         stage('Code Quality') {
             steps {
-                echo 'Running basic code quality check...'
                 sh '''
                 echo "Listing JavaScript files..."
                 find . -name "*.js" -not -path "./node_modules/*" -not -path "./coverage/*"
 
-                echo "Checking for TODO comments..."
+                echo "Checking TODO comments..."
                 grep -R "TODO" . --include="*.js" --exclude-dir=node_modules --exclude-dir=coverage || true
 
-                echo "Code quality stage completed successfully."
+                echo "Code quality stage completed."
                 '''
             }
         }
 
         stage('Security') {
             steps {
-                echo 'Running dependency security scan...'
                 sh 'npm audit --audit-level=moderate || true'
 
-                echo 'Running Docker image security scan...'
                 sh '''
                 if command -v trivy >/dev/null 2>&1; then
                     trivy image $DOCKER_LATEST || true
                 else
-                    echo "Trivy is not installed. Skipping Docker image scan."
+                    echo "Trivy not installed. Skipping image scan."
                 fi
                 '''
             }
@@ -73,17 +64,14 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo 'Deploying with Docker Compose...'
-
-                sh 'docker-compose down || true'
-                sh 'docker-compose up -d --build'
+                sh 'docker stop safe-route-ai || true'
+                sh 'docker rm safe-route-ai || true'
+                sh 'docker run -d --name safe-route-ai -p 3000:3000 $DOCKER_LATEST'
             }
         }
 
         stage('Release') {
             steps {
-                echo 'Creating release tag...'
-
                 sh '''
                 git config user.email "jenkins@example.com"
                 git config user.name "Jenkins CI"
@@ -96,16 +84,9 @@ pipeline {
 
         stage('Monitoring') {
             steps {
-                echo 'Checking deployed application health...'
                 sh 'sleep 10'
-
-                echo 'Testing /health endpoint...'
                 sh 'curl -f http://localhost:3000/health'
-
-                echo 'Checking Docker containers...'
                 sh 'docker ps'
-
-                echo 'Showing recent application logs...'
                 sh 'docker logs safe-route-ai --tail 50 || true'
             }
         }
@@ -117,7 +98,7 @@ pipeline {
         }
 
         failure {
-            echo 'Pipeline failed. Check the console output above.'
+            echo 'Pipeline failed. Check console output.'
         }
 
         always {
