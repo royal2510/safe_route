@@ -3,13 +3,13 @@
 ## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
+https://github.com/royal2510/safe_route
 ```
 
 ## 2. Open the Project Folder
 
 ```bash
-cd YOUR_REPOSITORY
+cd safe_route
 ```
 
 ## 3. Install Dependencies
