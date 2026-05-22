@@ -138,8 +138,23 @@ pipeline {
                 echo 'Recent app logs:'
                 sh 'docker logs $APP_NAME --tail 80 || true'
 
-                echo 'Testing /health endpoint inside app container:'
-                sh 'docker exec $APP_NAME curl -f http://localhost:3000/health'
+                echo 'Testing /health endpoint inside app container using Node.js:'
+                sh '''
+                docker exec $APP_NAME node -e "
+                fetch('http://localhost:3000/health')
+                  .then(res => {
+                    if (!res.ok) process.exit(1);
+                    return res.json();
+                  })
+                  .then(data => {
+                    console.log(JSON.stringify(data, null, 2));
+                  })
+                  .catch(err => {
+                    console.error(err);
+                    process.exit(1);
+                  });
+                "
+                '''
             }
         }
     }
