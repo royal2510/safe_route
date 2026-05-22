@@ -138,8 +138,8 @@ pipeline {
                 echo 'Recent app logs:'
                 sh 'docker logs $APP_NAME --tail 80 || true'
 
-                echo 'Testing /health endpoint:'
-                sh 'curl -f http://localhost:3000/health'
+                echo 'Testing /health endpoint inside app container:'
+                sh 'docker exec $APP_NAME curl -f http://localhost:3000/health'
             }
         }
     }
