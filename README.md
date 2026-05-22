@@ -1,26 +1,51 @@
-# Safe Route AI
+# Clone and Run the Project
 
-A polished full-stack DevSecOps web app for Jenkins pipeline assessment.
-
-## Included
-
-- Good-looking frontend dashboard
-- Register and login forms
-- JWT authentication
-- MongoDB route database
-- Create, read, update, delete route records
-- Seed demo database data
-- Health monitoring endpoint
-- Jest/Supertest tests
-- Docker and Docker Compose
-- Jenkinsfile with 7 stages
-
-## Run with Docker Compose
+## 1. Clone the Repository
 
 ```bash
-docker compose up -d --build
-docker exec safe-route-ai npm run seed
+git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
 ```
+
+## 2. Open the Project Folder
+
+```bash
+cd YOUR_REPOSITORY
+```
+
+## 3. Install Dependencies
+
+```bash
+npm install
+```
+
+## 4. Build the Docker Image
+
+```bash
+docker build -t safe-route-ai .
+```
+
+## 5. Run the Jenkins Pipeline
+
+In Jenkins:
+
+1. Create a new **Pipeline** job.
+2. Select **Pipeline script from SCM**.
+3. Choose **Git**.
+4. Paste your GitHub repository URL.
+5. Set the branch to:
+
+```text
+main
+```
+
+6. Save the pipeline.
+7. Click:
+
+```text
+Build Now
+```
+
+## 6. Access the Application
 
 Open:
 
@@ -28,18 +53,33 @@ Open:
 http://localhost:3000
 ```
 
-Demo login:
+## 7. Demo Login
 
 ```text
-demo@saferoute.com
-password123
+Email: demo@saferoute.com
+Password: password123
 ```
 
-## Test database functions
+## 8. Verify Docker Containers
 
-1. Login with the demo user.
-2. Click Load Database Routes.
-3. Create a route using the form.
-4. Edit a route.
-5. Delete a route.
-6. Check /health.
+```bash
+docker ps
+```
+
+You should see:
+
+```text
+safe-route-ai
+safe-route-mongo
+```
+
+## 9. Monitor the Application
+
+Health endpoint:
+
+```text
+http://localhost:3000/health
+```
+
+The Jenkins pipeline automatically checks this endpoint during the Monitoring stage.
+
